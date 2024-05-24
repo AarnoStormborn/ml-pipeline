@@ -1,4 +1,5 @@
 import pickle
+import uvicorn
 from typing import List
 from fastapi import FastAPI
 from pydantic import BaseModel
@@ -27,6 +28,11 @@ class TestingSample(BaseModel):
     region: str
 
 app = FastAPI()
+
+
+@app.get('/checkhealth')
+async def root():
+    return {"Status": "Application Running"}
 
 @app.post('/train')
 async def train_model(samples:List[TrainingSample]):
@@ -70,3 +76,7 @@ async def test_model(sample:TestingSample):
 
     y_pred = model.predict(df)
     return {"Prediction":y_pred[0]}
+
+
+if __name__=="__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)
